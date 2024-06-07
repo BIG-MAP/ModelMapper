@@ -1,0 +1,153 @@
+{
+    "negative_electrode": {
+        "active_materials": {
+            "entropy_coefficient": {
+                "value": "(-0.1112 * x + 0.02914 + 0.3561 * exp(-((x - 0.08309) ** 2) / 0.004616)) / 1000"
+            },
+            "stoichiometry1": {
+                "value": 0.82258
+            },
+            "diffusion_constant": {
+                "arrhenius": {
+                    "activation_energy": 30000
+                },
+                "value": 9.6e-15
+            },
+            "maximum_concentration": {
+                "value": 31400
+            },
+            "stoichiometry0": {
+                "value": 0.0016261
+            }
+        },
+        "thickness": {
+            "value": 4.44e-05
+        },
+        "electronic_conductivity": {
+            "value": 7.46
+        }
+    },
+    "positive_electrode": {
+        "thickness": {
+            "value": 6.43e-05
+        },
+        "active_materials": {
+            "stoichiometry0": {
+                "value": 0.0875
+            },
+            "diffusion_constant": {
+                "value": 6.873e-17,
+                "arrhenius": {
+                    "activation_energy": 80000
+                }
+            },
+            "stoichiometry1": {
+                "value": 0.95038
+            },
+            "maximum_concentration": {
+                "value": 21200
+            },
+            "entropy_coefficient": {
+                "value": {
+                    "x": [
+                        0,
+                        0.05,
+                        0.1,
+                        0.15,
+                        0.2,
+                        0.25,
+                        0.3,
+                        0.35,
+                        0.4,
+                        0.45,
+                        0.5,
+                        0.55,
+                        0.6,
+                        0.65,
+                        0.7,
+                        0.75,
+                        0.8,
+                        0.85,
+                        0.9,
+                        0.95,
+                        1
+                    ],
+                    "y": [
+                        0.0001,
+                        4.7145e-05,
+                        3.7666e-05,
+                        2.0299e-05,
+                        5.9833e-06,
+                        -4.6859e-06,
+                        -1.3966e-05,
+                        -2.3528e-05,
+                        -3.3593e-05,
+                        -4.3433e-05,
+                        -5.2311e-05,
+                        -6.0211e-05,
+                        -6.8006e-05,
+                        -7.6939e-05,
+                        -8.7641e-05,
+                        -9.913e-05,
+                        -0.00010855,
+                        -0.00011266,
+                        -0.00011238,
+                        -0.00010921,
+                        -0.00022539
+                    ]
+                }
+            }
+        },
+        "electronic_conductivity": {
+            "value": 0.8
+        }
+    },
+    "properties": {
+        "specific_heat": {
+            "value": 999
+        },
+        "area": {
+            "value": 0.08959998
+        },
+        "density": {
+            "value": 1940
+        },
+        "volume": {
+            "value": 1.7e-05
+        }
+    },
+    "simulation": {
+        "initial_state": {
+            "initial_temperature": {
+                "value": 298.15
+            },
+            "exterior_temperature": {
+                "value": 298.15
+            }
+        },
+        "triggers": {
+            "voltage": {
+                "lower": 2.0
+            }
+        }
+    },
+    "electrolyte": {
+        "diffusion_constant": {
+            "value": "8.794e-11 * (x / 1000) ** 2 - 3.972e-10 * (x / 1000) + 4.862e-10",
+            "arrhenius": {
+                "activation_energy": 17100
+            }
+        },
+        "transference_number": {
+            "value": 0.259
+        },
+        "ionic_conductivity": {
+            "arrhenius": {
+                "activation_energy": 17100
+            }
+        },
+        "initial_concentration": {
+            "value": 1000
+        }
+    }
+}
