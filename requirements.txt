@@ -1,0 +1,8 @@
+requests
+rdflib
+jsonschema
+pybamm
+ipykernel
+bpx
+ipywidgets
+matplotlib

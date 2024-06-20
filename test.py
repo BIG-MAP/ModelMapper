@@ -1,6 +1,7 @@
 import json
 import ast
 import requests
+import pybamm
 from rdflib import Graph, URIRef
 from jsonschema import validate, ValidationError
 import re
@@ -69,12 +70,13 @@ class JSONWriter:
             json.dump(data, file, indent=4)
 
 class ParameterMapper:
-    def __init__(self, mappings, template, input_url, output_type):
+    def __init__(self, mappings, template, input_url, output_type, input_type):
         self.mappings = mappings
         self.template = template
         self.input_url = input_url
         self.output_type = output_type
-        self.defaults_used = []
+        self.input_type = input_type
+        self.defaults_used = set(self.get_all_paths(template))
 
     def map_parameters(self, input_data):
         output_data = self.template.copy()
@@ -83,9 +85,12 @@ class ParameterMapper:
             if value is not None:
                 if isinstance(value, str):
                     value = self.replace_variables(value)
+                if self.input_type == 'cidemod' and 'kinetic_constant' in input_key:
+                    value = self.scale_kinetic_constant(value)
                 self.set_value_from_path(output_data, output_key, value)
                 self.remove_default_from_used(output_key)
         self.set_bpx_header(output_data)
+        self.remove_high_level_defaults()
         return output_data
 
     def replace_variables(self, value):
@@ -93,6 +98,27 @@ class ParameterMapper:
             value = re.sub(r'\bx_s\b', 'x', value)
             value = re.sub(r'\bc_e\b', 'x', value)
         return value
+
+    def scale_kinetic_constant(self, value):
+        try:
+            return value * 1e6
+        except TypeError:
+            print(f"Error scaling kinetic_constant value: {value}")
+            return value
+
+    def get_all_paths(self, data, path=""):
+        paths = set()
+        if isinstance(data, dict):
+            for key, value in data.items():
+                current_path = f"{path}.{key}" if path else key
+                paths.add(current_path)
+                paths.update(self.get_all_paths(value, current_path))
+        elif isinstance(data, list):
+            for i, item in enumerate(data):
+                current_path = f"{path}[{i}]"
+                paths.add(current_path)
+                paths.update(self.get_all_paths(item, current_path))
+        return paths
 
     def get_value_from_path(self, data, keys):
         try:
@@ -142,8 +168,7 @@ class ParameterMapper:
                 path += f".{key.strip()}"
             elif isinstance(key, int):
                 path += f"[{key}]"
-        if path in self.defaults_used:
-            self.defaults_used.remove(path)
+        self.defaults_used.discard(path)
 
     def set_bpx_header(self, data):
         data["Header"] = {
@@ -152,12 +177,17 @@ class ParameterMapper:
             "Description": f"This data set was automatically generated from {self.input_url}. Please check carefully.",
             "Model": "DFN"
         }
+        data.pop("Validation", None)
+
+    def remove_high_level_defaults(self):
+        self.defaults_used = {path for path in self.defaults_used if not any(k in path for k in ["Parameterisation", "Header"])}
 
 if __name__ == "__main__":
     ontology_url = 'https://w3id.org/emmo/domain/battery-model-lithium-ion/latest'
     input_json_url = 'https://raw.githubusercontent.com/cidetec-energy-storage/cideMOD/main/data/data_Chen_2020/params_tuned_vOCPexpression.json'
     output_json_path = 'converted_battery_parameters.json'
-    template_url = 'https://raw.githubusercontent.com/FaradayInstitution/BPX/main/examples/nmc_pouch_cell_BPX.json'
+    defaults_json_path = 'defaults_used.json'
+    template_url = 'https://raw.githubusercontent.com/BIG-MAP/ModelMapper/main/assets/bpx_template.json'
     input_type = 'cidemod'
     output_type = 'bpx'
 
@@ -172,12 +202,44 @@ if __name__ == "__main__":
 
     # Load the template JSON file
     template_data = JSONLoader.load(template_url)
+    template_data.pop("Validation", None)  # Remove validation if it exists in the template
 
     # Map the parameters using the mappings from the ontology
-    parameter_mapper = ParameterMapper(mappings, template_data, input_json_url, output_type)
+    parameter_mapper = ParameterMapper(mappings, template_data, input_json_url, output_type, input_type)
     output_data = parameter_mapper.map_parameters(input_data)
-    output_data["defaults_used"] = list(parameter_mapper.defaults_used)
+    defaults_used_data = list(parameter_mapper.defaults_used)
     print("Output Data:", json.dumps(output_data, indent=4))
 
     # Write the output JSON file
     JSONWriter.write(output_data, output_json_path)
+
+    # Write the defaults used JSON file
+    JSONWriter.write(defaults_used_data, defaults_json_path)
+    
+    # Load the DFN model
+    model = pybamm.lithium_ion.DFN()
+
+    # Load the parameter values
+    parameter_values = pybamm.ParameterValues.create_from_bpx('converted_battery_parameters.json')
+
+    # Define the experiment: Charge from SOC=0.01, then discharge
+    experiment = pybamm.Experiment([
+        ("Charge at C/5 until 4.2 V",
+         "Hold at 4.2 V until 1 mA",
+         "Rest for 1 hour",
+         "Discharge at C/5 until 2.5 V")
+    ])
+
+    # Create the simulation with the experiment
+    sim = pybamm.Simulation(model, experiment=experiment, parameter_values=parameter_values)
+
+
+    # Define initial concentration in negative and positive electrodes
+    parameter_values["Initial concentration in negative electrode [mol.m-3]"] = 0.0279 * parameter_values["Maximum concentration in negative electrode [mol.m-3]"]
+    parameter_values["Initial concentration in positive electrode [mol.m-3]"] = 0.9084 * parameter_values["Maximum concentration in positive electrode [mol.m-3]"]
+
+    # Solve the simulation
+    sim.solve()
+
+    # Plot the results
+    sim.plot()
