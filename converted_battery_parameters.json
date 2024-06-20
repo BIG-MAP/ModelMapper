@@ -1,34 +1,72 @@
 {
+    "Header": {
+        "BPX": 0.1,
+        "Title": "An autoconverted parameter set using BatteryModelMapper",
+        "Description": "This data set was automatically generated from https://raw.githubusercontent.com/cidetec-energy-storage/cideMOD/main/data/data_Chen_2020/params_tuned_vOCPexpression.json. Please check carefully.",
+        "Model": "DFN"
+    },
     "Parameterisation": {
-        "Positive electrode": {
-            "Thickness [m]": 7.56e-05,
-            "Minimum stoichiometry": 0.9084,
-            "OCP [V]": "(-0.8090 * x_s + 4.4875 - 0.0428 * tanh(18.5138 * (x_s - 0.5542)) - 17.7326 * tanh(15.7890 * (x_s - 0.3117)) + 17.5842 * tanh(15.9308 * (x_s - 0.3120)))",
-            "Diffusivity [m2.s-1]": 4e-15,
-            "Conductivity [S.m-1]": 0.18,
-            "Maximum stoichiometry": 0.27,
-            "Particle radius [m]": 5.22e-06,
-            "Reaction rate constant [mol.m-2.s-1]": 3.54e-11,
-            "Maximum concentration [mol.m-3]": 63104.0,
-            "Porosity": 0.335
-        },
-        "Negative electrode": {
-            "Thickness [m]": 8.52e-05,
-            "Porosity": 0.25,
-            "Maximum concentration [mol.m-3]": 33133.0,
-            "Minimum stoichiometry": 0.0279,
-            "Reaction rate constant [mol.m-2.s-1]": 6.71e-12,
-            "Conductivity [S.m-1]": 215.0,
-            "OCP [V]": "(1.9793 * exp(-39.3631 * x_s) + 0.2482 - 0.0909 * tanh(29.8538 * (x_s - 0.1234)) - 0.04478 * tanh(14.9159 * (x_s - 0.2769)) - 0.0205 * tanh(30.4444 * (x_s - 0.6103)))",
-            "Particle radius [m]": 5.86e-06,
-            "Maximum stoichiometry": 0.9014,
-            "Diffusivity [m2.s-1]": 3.3e-14
+        "Cell": {
+            "Ambient temperature [K]": 298.15,
+            "Initial temperature [K]": 298.15,
+            "Reference temperature [K]": 298.15,
+            "Lower voltage cut-off [V]": 2.7,
+            "Upper voltage cut-off [V]": 4.2,
+            "Nominal cell capacity [A.h]": 36,
+            "Specific heat capacity [J.K-1.kg-1]": 913,
+            "Thermal conductivity [W.m-1.K-1]": 2.04,
+            "Density [kg.m-3]": 1847,
+            "Electrode area [m2]": 0.016808,
+            "Number of electrode pairs connected in parallel to make a cell": 34,
+            "External surface area [m2]": 0.0379,
+            "Volume [m3]": 0.000128
         },
         "Electrolyte": {
-            "Conductivity [S.m-1]": "0.1297*(c_e*1e-3)**3-2.51*(c_e*1e-3)**1.5+3.329*c_e*1e-3",
+            "Initial concentration [mol.m-3]": 1000.0,
             "Cation transference number": 0.2594,
-            "Diffusivity [m2.s-1]": "8.794e-11*(c_e*1e-3)**2-3.972e-10*(c_e*1e-3)+4.862e-10",
-            "Initial concentration [mol.m-3]": 1000.0
+            "Conductivity [S.m-1]": "0.1297*(x*1e-3)**3-2.51*(x*1e-3)**1.5+3.329*x*1e-3",
+            "Diffusivity [m2.s-1]": "8.794e-11*(x*1e-3)**2-3.972e-10*(x*1e-3)+4.862e-10",
+            "Conductivity activation energy [J.mol-1]": 17100,
+            "Diffusivity activation energy [J.mol-1]": 17100
+        },
+        "Negative electrode": {
+            "Particle radius [m]": 5.86e-06,
+            "Thickness [m]": 8.52e-05,
+            "Diffusivity [m2.s-1]": 3.3e-14,
+            "OCP [V]": "(1.9793 * exp(-39.3631 * x) + 0.2482 - 0.0909 * tanh(29.8538 * (x - 0.1234)) - 0.04478 * tanh(14.9159 * (x - 0.2769)) - 0.0205 * tanh(30.4444 * (x - 0.6103)))",
+            "Entropic change coefficient [V.K-1]": 0,
+            "Conductivity [S.m-1]": 215.0,
+            "Surface area per unit volume [m-1]": 499522,
+            "Porosity": 0.25,
+            "Transport efficiency": 0.128,
+            "Reaction rate constant [mol.m-2.s-1]": 6.71e-6,
+            "Minimum stoichiometry": 0.0279,
+            "Maximum stoichiometry": 0.9014,
+            "Maximum concentration [mol.m-3]": 33133.0,
+            "Diffusivity activation energy [J.mol-1]": 0,
+            "Reaction rate constant activation energy [J.mol-1]": 0
+        },
+        "Positive electrode": {
+            "Particle radius [m]": 5.22e-06,
+            "Thickness [m]": 7.56e-05,
+            "Diffusivity [m2.s-1]": 4e-15,
+            "OCP [V]": "(-0.8090 * x + 4.4875 - 0.0428 * tanh(18.5138 * (x - 0.5542)) - 17.7326 * tanh(15.7890 * (x - 0.3117)) + 17.5842 * tanh(15.9308 * (x - 0.3120)))",
+            "Entropic change coefficient [V.K-1]": 0,
+            "Conductivity [S.m-1]": 0.18,
+            "Surface area per unit volume [m-1]": 432072,
+            "Porosity": 0.335,
+            "Transport efficiency": 0.1462,
+            "Reaction rate constant [mol.m-2.s-1]": 3.54e-5,
+            "Minimum stoichiometry": 0.27,
+            "Maximum stoichiometry": 0.9084,
+            "Maximum concentration [mol.m-3]": 63104.0,
+            "Diffusivity activation energy [J.mol-1]": 0,
+            "Reaction rate constant activation energy [J.mol-1]": 0
+        },
+        "Separator": {
+            "Thickness [m]": 1.2e-05,
+            "Porosity": 0.47,
+            "Transport efficiency": 0.3222
         }
     }
 }
